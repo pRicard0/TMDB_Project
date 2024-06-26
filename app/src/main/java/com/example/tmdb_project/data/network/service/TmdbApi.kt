@@ -5,10 +5,10 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 import retrofit2.http.Headers
 
-private const val envVar: String = "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4OTQwNzYzZDQ5NDY0YTE1OTIyMmRiNGIwZDFmMWYxNCIsIm5iZiI6MTcxOTI2ODkxMS4wNjc5Niwic3ViIjoiNjY3OTYzZDdkYmM5NTZkNDdmOWY0NjViIiwic2NvcGVzIjpbImFwaV9yZWFkIl0sInZlcnNpb24iOjF9.d52ua3AhPh3GH35RZp8tPF_hGAyirOSoUasG3ukx9_g"
+private const val envVar: String = "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1ODBjNDQxMDhhYmJjMGYyMDkxOTE5ZjAzNzhmNmZiYiIsIm5iZiI6MTcxOTMyNjc0MS4yNjU1OTksInN1YiI6IjY0MzQ3YzZmZTkyZDgzMDExMzA4OWFkNSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.n73f9WOCLrrdbA8YjGglC4Lw3E6G_yw3kcN_Sg1MjSw"
 
 interface TmdbApi {
     @Headers(envVar, "accept: application/json")
-    @GET("3/movie/top_rated")
+    @GET("3/movie/popular")
     suspend fun getTopRatedMovies(): TopMoviesResponse
 }

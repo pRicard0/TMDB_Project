@@ -2,6 +2,11 @@ package com.example.tmdb_project.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
+
+val ButtonRedColor = Color(0xFFDB0404)
+val WarningColor = Color(0xFF07BC0C)
+
+// Android Colors
 val Purple80 = Color(0xFFD0BCFF)
 val PurpleGrey80 = Color(0xFFCCC2DC)
 val Pink80 = Color(0xFFEFB8C8)
