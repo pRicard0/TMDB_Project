@@ -1,31 +1,25 @@
 package com.example.tmdb_project.ui.theme.screens.Home
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.BlurEffect
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import com.example.tmdb_project.R
+import com.example.tmdb_project.componentes.MovieCard
 import com.example.tmdb_project.data.network.response.CardResponse
 
 
@@ -38,10 +32,14 @@ fun TopRatedMovies(){
     ) {
         when (viewModel.uiState) {
             is UiState.Loading -> {
-                Text(text = "Loading")
+                LoadingScreen()
             }
             is UiState.Success -> {
-                (viewModel.uiState as UiState.Success).movies?.let { AllCards(listAll = it) }
+                (viewModel.uiState as UiState.Success).movies?.let {
+                    if (listAllTopMovies != null) {
+                        AllCards(listAll = listAllTopMovies)
+                    }
+                }
             }
             is UiState.Error -> {
                 Text(text = (viewModel.uiState as UiState.Error).message)
@@ -57,25 +55,26 @@ fun AllCards(listAll: Array<CardResponse>){
         columns = GridCells.Adaptive(135.dp),
         modifier = Modifier.background(Color.Black),
         verticalArrangement = Arrangement.Center,
-        horizontalArrangement = Arrangement.Center
+        horizontalArrangement = Arrangement.Center,
     ) {
         items(listAll.size) { item ->
-            Card(
-                Modifier
-                    .padding(8.dp)
-                    .clip(RoundedCornerShape(20.dp))
-                    .clickable { /*TODO*/ }
-                    .fillMaxWidth()
-            ) {
-                AsyncImage(
-                    model = ImageRequest.Builder(context = LocalContext.current)
-                        .data("https://image.tmdb.org/t/p/w500${listAll[item].poster_path}")
-                        .crossfade(true)
-                        .build(),
-                    contentDescription = "CardFilms",
-                    contentScale = ContentScale.Fit
-                )
-            }
+            MovieCard(listAll = listAll, item = item)
         }
+    }
+}
+
+@Composable
+fun LoadingScreen(modifier: Modifier = Modifier) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black)
+    ) {
+        Image(
+            modifier = modifier.size(312.dp),
+            painter = painterResource(R.drawable.loading_img),
+            contentDescription = "Loading"
+        )
     }
 }
