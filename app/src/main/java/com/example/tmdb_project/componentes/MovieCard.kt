@@ -25,12 +25,8 @@ fun MovieCard(listAll: Array<CardResponse>, item: Int) {
     Card(
         Modifier
             .padding(8.dp)
-            .drawBehind {
-                drawShadowLayer()
-            }
             .clip(RoundedCornerShape(20.dp))
             .clickable { /*TODO*/ }
-            .fillMaxWidth()
     ) {
         AsyncImage(
             model = ImageRequest.Builder(context = LocalContext.current)
@@ -39,27 +35,6 @@ fun MovieCard(listAll: Array<CardResponse>, item: Int) {
                 .build(),
             contentDescription = "CardFilms",
             contentScale = ContentScale.Fit
-        )
-    }
-}
-
-fun DrawScope.drawShadowLayer() {
-    drawIntoCanvas { canvas ->
-        val paint = Paint().apply {
-            color = Color.White
-            asFrameworkPaint().apply {
-                setShadowLayer(10f, 0f, 0f, android.graphics.Color.WHITE)
-            }
-        }
-        val radius = 20.dp.toPx()
-        canvas.drawRoundRect(
-            0f,
-            0f,
-            size.width,
-            size.height,
-            radius,
-            radius,
-            paint
         )
     }
 }
