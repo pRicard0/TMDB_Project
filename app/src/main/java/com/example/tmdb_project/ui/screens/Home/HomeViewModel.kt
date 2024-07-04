@@ -9,6 +9,10 @@ import com.example.tmdb_project.data.database.Favorite
 import com.example.tmdb_project.data.database.FavoriteRepository
 import com.example.tmdb_project.data.network.response.CardResponse
 import com.example.tmdb_project.data.network.service.ApiService
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 sealed class UiState {
@@ -48,13 +52,38 @@ class HomeViewModel(private val favoriteRepository: FavoriteRepository) : ViewMo
         }
     }
 
+
+
+
+
+    // Parte de banco de dados. TODO remover depois para implementar na viewModel de Favorites
     fun CardResponse.toFavorite(): Favorite = Favorite(
         id = id,
         title = title,
         posterPath = poster_path
     )
-
     suspend fun favoriteMovie(movie: CardResponse) {
         favoriteRepository.insertFavorite(movie.toFavorite())
     }
+
+    suspend fun unfavoriteMovie(movie: Favorite) {
+        favoriteRepository.deleteFavorite(movie)
+    }
+
+    suspend fun getFavoriteByPosterPath(poster: String): Favorite {
+        return favoriteRepository.getFavoriteByPosterPath(poster)
+    }
+
+    companion object {
+        private const val TIMEOUT_MILLIS = 5_000L
+    }
+    data class FavoriteUiState(val posterList: List<String> = listOf())
+    val favoriteUiState: StateFlow<FavoriteUiState> =
+        favoriteRepository.getAllPostersStream().map { FavoriteUiState(it) }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+                initialValue = FavoriteUiState()
+            )
+    ///////////////////////////////////////////////////////////
 }
