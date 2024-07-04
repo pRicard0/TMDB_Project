@@ -18,32 +18,46 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.tmdb_project.R
 
 @Composable
-fun FavoritedCard() {
+fun FavoritedCard(
+    posterList: List<String>,
+    item: Int,
+    onUnfavoriteClick: () -> Unit,
+) {
     Box {
         Card(
             Modifier
-                .clip(RoundedCornerShape(20.dp))
+                .padding(top = 8.dp)
+                .clip(RoundedCornerShape(12.dp))
                 .clickable { /*TODO*/ }
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.f74fd251d32b1fec2592ecaaf8e87482),
-                contentDescription = "teste",
+            AsyncImage(
+                model = ImageRequest.Builder(context = LocalContext.current)
+                    .data("https://image.tmdb.org/t/p/w500${posterList[item]}")
+                    .crossfade(true)
+                    .build(),
+                contentDescription = "CardFilms",
+                contentScale = ContentScale.Fit
             )
         }
         Box(
-        modifier = Modifier
-            .offset(y = (-10).dp, x = 10.dp)
-            .size(28.dp)
-            .clip(CircleShape)
-            .background(Color.White)
-            .padding(2.dp)
-            .align(Alignment.TopEnd)
+            modifier = Modifier
+                .offset(y = 0.dp, x = 6.dp)
+                .size(20.dp)
+                .clip(CircleShape)
+                .background(Color.White)
+                .padding(2.dp)
+                .align(Alignment.TopEnd)
+                .clickable { onUnfavoriteClick() }
         ) {
             Box(
                 modifier = Modifier
@@ -55,7 +69,7 @@ fun FavoritedCard() {
                     painter = painterResource(id = R.drawable.baseline_close_24),
                     contentDescription = "Remove from favorites",
                     tint = Color.White,
-                    modifier = Modifier.size(20.dp).align(Alignment.Center)
+                    modifier = Modifier.size(12.dp).align(Alignment.Center)
                 )
             }
         }
@@ -67,10 +81,10 @@ fun FavoritedCard() {
 fun FavoritedCardPreview() {
     Column(
         modifier = Modifier
-             .fillMaxSize()
+            .fillMaxSize()
             .background(Color.Black)
             .padding(24.dp)
     ) {
-        FavoritedCard()
+
     }
 }

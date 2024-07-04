@@ -26,13 +26,13 @@ import com.example.tmdb_project.data.network.response.CardResponse
 fun MovieCard(
     listAll: Array<CardResponse>,
     item: Int,
-    onFavoriteClick: () -> Unit,
+    onDetailsClick: () -> Unit,
 ) {
     Card(
         Modifier
-            .padding(8.dp)
-            .clip(RoundedCornerShape(20.dp))
-            .clickable { onFavoriteClick() }
+            .padding(top = 8.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .clickable { onDetailsClick() }
     ) {
         AsyncImage(
             model = ImageRequest.Builder(context = LocalContext.current)

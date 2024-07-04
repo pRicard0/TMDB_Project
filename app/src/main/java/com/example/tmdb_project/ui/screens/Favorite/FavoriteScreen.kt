@@ -1,14 +1,14 @@
-package com.example.tmdb_project.ui.theme.screens.Home
+package com.example.tmdb_project.ui.screens.Home
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -22,43 +22,45 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.tmdb_project.R
-import com.example.tmdb_project.componentes.MovieCard
 import com.example.tmdb_project.componentes.TopBar
-import com.example.tmdb_project.data.network.response.CardResponse
+import com.example.tmdb_project.componentes.favoritesScreen.FavoritedCard
 import com.example.tmdb_project.navigation.NavigationDestination
 import com.example.tmdb_project.ui.AppViewModelProvider
-import com.example.tmdb_project.ui.screens.Home.DetailsViewModel
-import com.example.tmdb_project.ui.screens.Home.FavoriteDestination
+import com.example.tmdb_project.ui.screens.Favorite.FavoriteViewModel
 import com.example.tmdb_project.ui.theme.BackgroundGreyColor
+import com.example.tmdb_project.ui.theme.TMDB_ProjectTheme
+import com.example.tmdb_project.ui.theme.Typography
+import com.example.tmdb_project.ui.theme.screens.Home.HomeDestination
 import kotlinx.coroutines.launch
 
-object HomeDestination : NavigationDestination {
-    override val route = "home"
-    override val title = "Home Screen"
+object FavoriteDestination : NavigationDestination {
+    override val route = "favoritos"
+    override val title = "Minha lista de favoritos"
 }
 
 @Composable
-fun HomeScreen(
-    viewModel: HomeViewModel,
-    detailsViewModel: DetailsViewModel,
-    navController: NavController,
-    onHomeIconClick: () -> Unit,
-    onFavoriteIconClick: () -> Unit
+fun FavoriteScreen(
+navController: NavController,
+onHomeIconClick: () -> Unit,
+onFavoriteIconClick: () -> Unit,
+viewModel: FavoriteViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
-    val listAllTopMovies = viewModel.listAllMovies
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val favoriteUiState by viewModel.favoriteUiState.collectAsState()
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -118,38 +120,31 @@ fun HomeScreen(
         Scaffold(
             topBar = {
                 TopBar(
-                    onNavigationIconClick = {
-                        scope.launch { drawerState.open() }
-                    },
+                    onNavigationIconClick = { scope.launch { drawerState.open() } },
                     onHomeIconClick = onHomeIconClick,
                     onFavoriteIconClick = onFavoriteIconClick,
-                    navController = navController
+                    navController = navController,
                 )
-            }
-
+            },
         ) { innerPadding ->
-            Column(
-                modifier = Modifier.fillMaxSize().padding(innerPadding).background(BackgroundGreyColor)
+            Surface(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .background(Color.Black),
             ) {
-                when (viewModel.uiState) {
-                    is UiState.Loading -> {
-                        LoadingScreen()
-                    }
-
-                    is UiState.Success -> {
-                        listAllTopMovies?.let {
-                            AllCards(
-                                listAll = it,
-                                navController = navController,
-                                viewModel = viewModel,
-                                detailsViewModel = detailsViewModel
-                            )
-                        }
-                    }
-
-                    is UiState.Error -> {
-                        Text(text = (viewModel.uiState as UiState.Error).message)
-                    }
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.background(BackgroundGreyColor)
+                ) {
+                    Spacer(modifier = Modifier.height(24.dp))
+                    Text(
+                        text = "Minha Lista",
+                        style = Typography.titleLarge,
+                        color = Color.White
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    FavoritesBody(posterList = favoriteUiState.posterList, viewModel = viewModel)
                 }
             }
         }
@@ -158,40 +153,28 @@ fun HomeScreen(
 
 
 @Composable
-fun AllCards(listAll: Array<CardResponse>, viewModel: HomeViewModel, detailsViewModel: DetailsViewModel, navController: NavController){
+fun FavoritesBody(
+    posterList: List<String>,
+    viewModel: FavoriteViewModel
+) {
     val coroutineScope = rememberCoroutineScope()
     LazyVerticalGrid(
         columns = GridCells.Adaptive(135.dp),
         modifier = Modifier.padding(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        items(listAll.size) { item ->
-            MovieCard(
-                listAll = listAll,
-                item = item,
-                onDetailsClick = {
+        items(posterList.size) { posterIndex ->
+            FavoritedCard(
+                posterList = posterList,
+                item = posterIndex,
+                onUnfavoriteClick = {
                     coroutineScope.launch {
-                        detailsViewModel.getSaveStateFromHome(listAll[item])
+                        viewModel.unfavoriteMovie(viewModel.getFavoriteByPosterPath(posterList[posterIndex]))
                     }
-                    navController.navigate("movie_details/${listAll[item].id}")
                 }
             )
         }
     }
 }
 
-@Composable
-fun LoadingScreen(modifier: Modifier = Modifier) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black)
-    ) {
-        Image(
-            modifier = modifier.size(312.dp),
-            painter = painterResource(R.drawable.loading_img),
-            contentDescription = "Loading"
-        )
-    }
-}

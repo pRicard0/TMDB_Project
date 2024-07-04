@@ -47,14 +47,4 @@ class HomeViewModel(private val favoriteRepository: FavoriteRepository) : ViewMo
             }
         }
     }
-
-    fun CardResponse.toFavorite(): Favorite = Favorite(
-        id = id,
-        title = title,
-        posterPath = poster_path
-    )
-
-    suspend fun favoriteMovie(movie: CardResponse) {
-        favoriteRepository.insertFavorite(movie.toFavorite())
-    }
 }

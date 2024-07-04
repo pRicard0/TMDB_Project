@@ -1,9 +1,11 @@
 package com.example.tmdb_project
 
 import androidx.compose.runtime.Composable
-import com.example.tmdb_project.ui.theme.screens.Home.TopRatedMovies
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.example.tmdb_project.navigation.TmdbNavHost
 
 @Composable
-fun TmdbApp() {
-    TopRatedMovies()
+fun TmdbApp(navController: NavHostController = rememberNavController()) {
+    TmdbNavHost(navController = navController)
 }
