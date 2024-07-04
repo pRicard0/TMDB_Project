@@ -38,105 +38,36 @@ import androidx.navigation.NavController
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(
-    navController: NavController,
-    onNavigationIconClick: () -> Unit, // Callback for navigation icon click
+    onNavigationIconClick: () -> Unit,
+    onHomeIconClick: () -> Unit,
+    onFavoriteIconClick: () -> Unit,
     title: String = "App Title",
-    actions: @Composable RowScope.() -> Unit = {} // Slot for custom actions
+    actions: @Composable RowScope.() -> Unit = {}
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
     CenterAlignedTopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = Color.Black,
-            titleContentColor = White,
-        ),
-        title = { Text(text = title) },
-        navigationIcon = {
-            IconButton(onClick = onNavigationIconClick) {
-                Icon(Icons.Filled.Menu, contentDescription = "Menu", tint = White)
-            }
-        },
-        actions = actions,
-        scrollBehavior = scrollBehavior,
-    )
-}
-
-// Usage in your main screen composable (or wherever you need it)
-@Composable
-fun MainScreen() {
-    val navController = rememberNavController()
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val scope = rememberCoroutineScope()
-
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        drawerContent = { /* ... your drawer content */ }
-    ) {
-        Scaffold(
-            topBar = {
-                TopBar(
-                    navController = navController,
-                    onNavigationIconClick = {
-                        scope.launch { drawerState.open() }
-                    }
-                )
-            }
-        ) { innerPadding ->
-            Column(
-                Modifier
-                    .padding(innerPadding)
-                    .background(Color.DarkGray)
-            ) {
-                NavHost(navController, startDestination = "home") {
-                    // ... your composable routes
-                }
-            }
-        }
-    }
-}
-                    /*composable("details/{movieId}"){ backstackEntry ->
-                        backstackEntry.arguments?.getString("movieId")
-                            ?.let { movieId ->
-                                val viewModel = viewModel<DetailsViewModel>(
-                                    factory = object :ViewModelProvider.Factory{
-                                        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                                            return DetailsViewModel(movieId.toInt()) as T
-                                        }
-                                    }
-                                )
-                                DetailsScreen(viewModel.movieUiState)
-                            }
-                    }*/
-
-
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun TopAppBar(scrollBehavior: TopAppBarScrollBehavior, scope: CoroutineScope, drawerState: DrawerState, navController: NavController) {
-
-    CenterAlignedTopAppBar(
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = Color.Black,
-            titleContentColor = White,
+            titleContentColor = Color.White,
         ),
         title = {
-            IconButtonCinema(Icons.Filled.Home, "Home", White, { navController.navigate("home") })
+            IconButton(onClick = onHomeIconClick) {
+                Icon(Icons.Filled.Home, contentDescription = "Home", tint = Color.White)
+            }
         },
         navigationIcon = {
-            IconButtonCinema(Icons.Filled.Menu, "Menu", White) {
-                scope.launch {
-                    drawerState.apply {
-                        if (isClosed) open() else close()
-                    }
-                }
-
+            IconButton(onClick = onNavigationIconClick) {
+                Icon(Icons.Filled.Menu, contentDescription = "Menu", tint = Color.White)
             }
         },
         actions = {
-            IconButtonCinema(Icons.Filled.Favorite, "Favorite", Red,{ navController.navigate("favorites") })
+            IconButton(onClick = onFavoriteIconClick) {
+                Icon(Icons.Filled.Favorite, contentDescription = "Favorite", tint = Color.Red)
+            }
+            actions()
         },
         scrollBehavior = scrollBehavior,
     )
-
 }
 
