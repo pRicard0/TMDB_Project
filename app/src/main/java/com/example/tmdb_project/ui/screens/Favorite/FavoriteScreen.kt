@@ -4,14 +4,21 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -31,7 +38,6 @@ import com.example.tmdb_project.ui.screens.Favorite.FavoriteViewModel
 import com.example.tmdb_project.ui.theme.BackgroundGreyColor
 import com.example.tmdb_project.ui.theme.TMDB_ProjectTheme
 import com.example.tmdb_project.ui.theme.Typography
-import com.example.tmdb_project.ui.theme.screens.Home.HomeViewModel
 import kotlinx.coroutines.launch
 
 object FavoriteDestination : NavigationDestination {
@@ -41,43 +47,63 @@ object FavoriteDestination : NavigationDestination {
 
 @Composable
 fun FavoriteScreen(
-    navController: NavController,
-    onHomeIconClick: () -> Unit,
-    onFavoriteIconClick: () -> Unit,
-    viewModel: FavoriteViewModel = viewModel(factory = AppViewModelProvider.Factory),
+navController: NavController,
+onHomeIconClick: () -> Unit,
+onFavoriteIconClick: () -> Unit,
+viewModel: FavoriteViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
     val favoriteUiState by viewModel.favoriteUiState.collectAsState()
-    Scaffold(
-        topBar = {
-            TopBar(
-                onNavigationIconClick = { /*TODO*/ },
-                onHomeIconClick = onHomeIconClick,
-                onFavoriteIconClick = onFavoriteIconClick
-            )
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            ModalDrawerSheet {
+                LazyColumn(
+                    modifier = Modifier
+                        .background(Color.Black)
+                        .fillMaxHeight()
+                        .fillMaxWidth(0.8f)
+                ) {
+                }
+            }
         }
-    ) { innerPadding ->
-        Surface(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .background(Color.Black),
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.background(BackgroundGreyColor)
-            ) {
-                Spacer(modifier = Modifier.height(24.dp))
-                Text(
-                    text = "Minha Lista",
-                    style = Typography.titleLarge,
-                    color = Color.White
+    ) {
+        Scaffold(
+            topBar = {
+                TopBar(
+                    onNavigationIconClick = { scope.launch { drawerState.open() } },
+                    onHomeIconClick = onHomeIconClick,
+                    onFavoriteIconClick = onFavoriteIconClick,
+                    navController = navController,
                 )
-                Spacer(modifier = Modifier.height(8.dp))
-                FavoritesBody(posterList = favoriteUiState.posterList, viewModel = viewModel)
+            },
+        ) { innerPadding ->
+            Surface(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .background(Color.Black),
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.background(BackgroundGreyColor)
+                ) {
+                    Spacer(modifier = Modifier.height(24.dp))
+                    Text(
+                        text = "Minha Lista",
+                        style = Typography.titleLarge,
+                        color = Color.White
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    FavoritesBody(posterList = favoriteUiState.posterList, viewModel = viewModel)
+                }
             }
         }
     }
 }
+
 
 @Composable
 fun FavoritesBody(
@@ -105,52 +131,3 @@ fun FavoritesBody(
     }
 }
 
-/*
-@Composable
-    fun FavoritesScreen(
-        modifier:Modifier = Modifier,
-        favoriteUiState: FavoriteUiState,
-        navController: NavController,
-        favoriteViewModel: FavoriteViewModel
-    ) {
-
-        var nextPage: Int by remember { mutableIntStateOf(2) }
-
-    Scaffold(
-        topBar = {
-                TopBar(
-                    onNavigationIconClick = { /*TODO*/ },
-                    onHomeIconClick = { /*TODO*/ },
-                    onFavoriteIconClick = { /*TODO*/ }
-                )
-        }
-
-    ) { innerPadding ->
-        Surface(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .background(Color.Black),
-        ) {
-
-            LaunchedEffect(favoriteUiState) {
-                if (favoriteUiState is FavoriteUiState.AddSuccess) {
-                    Toast.makeText(
-                        context,
-                        "Filme adicionado aos favoritos!",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-        }
-    }
-}
-
- */
-
-@Preview
-@Composable
-fun FavoritePreview() {
-    TMDB_ProjectTheme {
-    }
-}

@@ -44,6 +44,7 @@ viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
 navController: NavController,
 onHomeIconClick: () -> Unit,
 onFavoriteIconClick: () -> Unit
+
 ) {
     val listAllTopMovies = viewModel.listAllMovies
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -56,7 +57,8 @@ onFavoriteIconClick: () -> Unit
                     scope.launch { drawerState.open() }
                 },
                 onHomeIconClick = onHomeIconClick,
-                onFavoriteIconClick = onFavoriteIconClick
+                onFavoriteIconClick = onFavoriteIconClick,
+                navController = navController
             )
         }
 

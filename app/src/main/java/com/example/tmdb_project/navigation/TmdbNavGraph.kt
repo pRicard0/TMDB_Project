@@ -32,13 +32,11 @@ fun TmdbNavHost(
                 onFavoriteIconClick = { navController.navigate(FavoriteDestination.route) }
             )
         }
-
         composable(route = FavoriteDestination.route) {
             FavoriteScreen(
                 navController = navController,
                 onHomeIconClick = { navController.navigate(HomeDestination.route) },
-                onFavoriteIconClick = { navController.navigate(FavoriteDestination.route) }
-            )
+                onFavoriteIconClick = { navController.navigate(FavoriteDestination.route) })
         }
 
         composable(
