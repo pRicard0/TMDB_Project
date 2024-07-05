@@ -5,12 +5,16 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.tmdb_project.TmdbApplication
+import com.example.tmdb_project.ui.screens.Favorite.FavoriteViewModel
 import com.example.tmdb_project.ui.theme.screens.Home.HomeViewModel
 
 object AppViewModelProvider{
     val Factory = viewModelFactory {
         initializer {
             HomeViewModel(tmdbApplication().container.favoriteRepository)
+        }
+        initializer {
+            FavoriteViewModel(tmdbApplication().container.favoriteRepository)
         }
     }
 }

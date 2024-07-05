@@ -11,8 +11,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -26,28 +28,41 @@ import com.example.tmdb_project.R
 import com.example.tmdb_project.componentes.MovieCard
 import com.example.tmdb_project.componentes.TopBar
 import com.example.tmdb_project.data.network.response.CardResponse
+import com.example.tmdb_project.navigation.NavigationDestination
 import com.example.tmdb_project.ui.AppViewModelProvider
+import com.example.tmdb_project.ui.theme.BackgroundGreyColor
 import kotlinx.coroutines.launch
+
+object HomeDestination : NavigationDestination {
+    override val route = "home"
+    override val title = "Home Screen"
+}
 
 @Composable
 fun HomeScreen(
 viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
-navController: NavController // Add navController parameter
+navController: NavController,
+onHomeIconClick: () -> Unit,
+onFavoriteIconClick: () -> Unit
 ) {
     val listAllTopMovies = viewModel.listAllMovies
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
             TopBar(
-                onNavigationIconClick = { /*TODO*/ },
-                onHomeIconClick = { /*TODO*/ },
-                onFavoriteIconClick = { /*TODO*/ }
+                onNavigationIconClick = {
+                    scope.launch { drawerState.open() }
+                },
+                onHomeIconClick = onHomeIconClick,
+                onFavoriteIconClick = onFavoriteIconClick
             )
         }
 
     ) { innerPadding ->
         Column(
-            modifier = Modifier.fillMaxWidth().padding(innerPadding)
+            modifier = Modifier.fillMaxSize().padding(innerPadding).background(BackgroundGreyColor)
         ) {
             when (viewModel.uiState) {
                 is UiState.Loading -> {
@@ -78,19 +93,16 @@ fun AllCards(listAll: Array<CardResponse>, viewModel: HomeViewModel, navControll
     val coroutineScope = rememberCoroutineScope()
     LazyVerticalGrid(
         columns = GridCells.Adaptive(135.dp),
-        modifier = Modifier.background(Color.Black),
-        verticalArrangement = Arrangement.Center,
-        horizontalArrangement = Arrangement.Center,
+        modifier = Modifier.padding(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         items(listAll.size) { item ->
             MovieCard(
                 listAll = listAll,
                 item = item,
                 // Favoritando os filmes, enviando para o banco de dados. TODO, apagar e implementar na tela de detalhes
-                onFavoriteClick = {
-                    coroutineScope.launch {
-                        viewModel.favoriteMovie(listAll[item])
-                    }
+                onDetailsClick = {
+                    navController.navigate("movie_details/${listAll[item].id}")
                 }
             )
         }

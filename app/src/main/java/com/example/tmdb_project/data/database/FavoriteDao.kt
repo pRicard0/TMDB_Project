@@ -12,6 +12,9 @@ interface FavoriteDao {
     @Query("SELECT posterPath FROM favorite")
     fun getAllPosters(): Flow<List<String>>
 
+    @Query("SELECT * FROM favorite WHERE posterPath = :posterPath")
+    suspend fun getFavoriteByPosterPath(posterPath: String): Favorite
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertFavorite(favorite: Favorite)
 

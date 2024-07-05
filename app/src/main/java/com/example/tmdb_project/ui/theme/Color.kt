@@ -5,6 +5,7 @@ import androidx.compose.ui.graphics.Color
 
 val ButtonRedColor = Color(0xFFDB0404)
 val WarningColor = Color(0xFF07BC0C)
+val BackgroundGreyColor = Color(0xFF232125)
 
 // Android Colors
 val Purple80 = Color(0xFFD0BCFF)

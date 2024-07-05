@@ -15,7 +15,7 @@ interface TmdbApi {
     suspend fun getTopRatedMovies(): TopMoviesResponse
 
     @Headers(envVar, "accept: application/json")
-    @GET("movie/{movieId}")
+    @GET("3/movie/{movieId}")
     suspend fun getMovieDetails(
         @Path("movieId") movieId: Int,
     ): MovieDetailsResponse

@@ -1,6 +1,7 @@
 package com.example.tmdb_project.ui.screens.Home
 
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,12 +28,21 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.tmdb_project.componentes.ButtonTrailer
+import com.example.tmdb_project.navigation.NavigationDestination
 import com.example.tmdb_project.ui.theme.screens.Home.UiState
+
+object DetailsDestination : NavigationDestination {
+    override val route = "movie_details"
+    override val title = "Detalhes sobre o filme"
+    const val movieIdArg = "movieId"
+    val routeWithArgs = "$route/{$movieIdArg}"
+}
 
 @Composable
 fun DetailsScreen(movieId: Int, navController: NavHostController) {
     val viewModel: DetailsViewModel = viewModel()
     LaunchedEffect(movieId) {
+        Log.d("DetailsScreen", "Fetching details for movieId: $movieId")
         viewModel.getMovieDetails(movieId)
     }
     val movieDetails = viewModel.movieDetails
@@ -91,7 +101,10 @@ fun DetailsScreen(movieId: Int, navController: NavHostController) {
         }
         is DetailsUiState.Error -> {
             // ... (Error state handling remains the same)
-            Text(text = (viewModel.uiState as DetailsUiState.Error).message)
+            Column {
+                Text(text = "Erro!")
+                Text(text = (viewModel.uiState as DetailsUiState.Error).message)
+            }
         }
 
         else -> {Text(text = "No movie data available")}

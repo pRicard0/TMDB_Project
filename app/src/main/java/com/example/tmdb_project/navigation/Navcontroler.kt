@@ -1,4 +1,4 @@
-package com.example.tmdb_project.navegation
+package com.example.tmdb_project.navigation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun NavControler() {
+fun NavControler2() {
     val navController = rememberNavController()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
