@@ -7,6 +7,8 @@ interface FavoriteRepository {
 
     suspend fun getFavoriteByPosterPath(poster: String): Favorite
 
+    suspend fun getFavoriteById(id: Int): Int
+
     suspend fun insertFavorite(favorite: Favorite)
 
     suspend fun deleteFavorite(favorite: Favorite)

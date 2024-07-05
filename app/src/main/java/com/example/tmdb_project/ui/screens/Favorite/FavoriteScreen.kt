@@ -105,49 +105,6 @@ fun FavoritesBody(
     }
 }
 
-/*
-@Composable
-    fun FavoritesScreen(
-        modifier:Modifier = Modifier,
-        favoriteUiState: FavoriteUiState,
-        navController: NavController,
-        favoriteViewModel: FavoriteViewModel
-    ) {
-
-        var nextPage: Int by remember { mutableIntStateOf(2) }
-
-    Scaffold(
-        topBar = {
-                TopBar(
-                    onNavigationIconClick = { /*TODO*/ },
-                    onHomeIconClick = { /*TODO*/ },
-                    onFavoriteIconClick = { /*TODO*/ }
-                )
-        }
-
-    ) { innerPadding ->
-        Surface(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .background(Color.Black),
-        ) {
-
-            LaunchedEffect(favoriteUiState) {
-                if (favoriteUiState is FavoriteUiState.AddSuccess) {
-                    Toast.makeText(
-                        context,
-                        "Filme adicionado aos favoritos!",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-        }
-    }
-}
-
- */
-
 @Preview
 @Composable
 fun FavoritePreview() {

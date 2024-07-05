@@ -6,6 +6,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.tmdb_project.TmdbApplication
 import com.example.tmdb_project.ui.screens.Favorite.FavoriteViewModel
+import com.example.tmdb_project.ui.screens.Home.DetailsViewModel
 import com.example.tmdb_project.ui.theme.screens.Home.HomeViewModel
 
 object AppViewModelProvider{
@@ -15,6 +16,9 @@ object AppViewModelProvider{
         }
         initializer {
             FavoriteViewModel(tmdbApplication().container.favoriteRepository)
+        }
+        initializer {
+            DetailsViewModel(tmdbApplication().container.favoriteRepository)
         }
     }
 }

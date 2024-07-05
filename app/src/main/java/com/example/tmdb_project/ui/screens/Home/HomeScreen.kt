@@ -30,6 +30,7 @@ import com.example.tmdb_project.componentes.TopBar
 import com.example.tmdb_project.data.network.response.CardResponse
 import com.example.tmdb_project.navigation.NavigationDestination
 import com.example.tmdb_project.ui.AppViewModelProvider
+import com.example.tmdb_project.ui.screens.Home.DetailsViewModel
 import com.example.tmdb_project.ui.theme.BackgroundGreyColor
 import kotlinx.coroutines.launch
 
@@ -40,10 +41,11 @@ object HomeDestination : NavigationDestination {
 
 @Composable
 fun HomeScreen(
-viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
-navController: NavController,
-onHomeIconClick: () -> Unit,
-onFavoriteIconClick: () -> Unit
+    viewModel: HomeViewModel,
+    detailsViewModel: DetailsViewModel,
+    navController: NavController,
+    onHomeIconClick: () -> Unit,
+    onFavoriteIconClick: () -> Unit
 ) {
     val listAllTopMovies = viewModel.listAllMovies
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -74,7 +76,8 @@ onFavoriteIconClick: () -> Unit
                         AllCards(
                             listAll = it,
                             navController = navController,
-                            viewModel = viewModel
+                            viewModel = viewModel,
+                            detailsViewModel = detailsViewModel
                         )
                     }
                 }
@@ -89,7 +92,7 @@ onFavoriteIconClick: () -> Unit
 
 
 @Composable
-fun AllCards(listAll: Array<CardResponse>, viewModel: HomeViewModel, navController: NavController){
+fun AllCards(listAll: Array<CardResponse>, viewModel: HomeViewModel, detailsViewModel: DetailsViewModel, navController: NavController){
     val coroutineScope = rememberCoroutineScope()
     LazyVerticalGrid(
         columns = GridCells.Adaptive(135.dp),
@@ -100,8 +103,10 @@ fun AllCards(listAll: Array<CardResponse>, viewModel: HomeViewModel, navControll
             MovieCard(
                 listAll = listAll,
                 item = item,
-                // Favoritando os filmes, enviando para o banco de dados. TODO, apagar e implementar na tela de detalhes
                 onDetailsClick = {
+                    coroutineScope.launch {
+                        detailsViewModel.getSaveStateFromHome(listAll[item])
+                    }
                     navController.navigate("movie_details/${listAll[item].id}")
                 }
             )
