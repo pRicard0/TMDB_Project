@@ -41,7 +41,7 @@ fun DetailsButton(color: Color, @DrawableRes icon: Int, text: String, onClick: (
             .width(108.dp)
             .border(1.dp, outlinedButtonColor, RoundedCornerShape(8.dp))
             .background(color, RoundedCornerShape(8.dp))
-            .clickable { /*TODO*/ }
+            .clickable { onClick() }
     ) {
         Row(
             modifier = Modifier.align(Alignment.Center),

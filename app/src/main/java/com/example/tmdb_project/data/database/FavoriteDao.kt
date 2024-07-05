@@ -15,6 +15,9 @@ interface FavoriteDao {
     @Query("SELECT * FROM favorite WHERE posterPath = :posterPath")
     suspend fun getFavoriteByPosterPath(posterPath: String): Favorite
 
+    @Query("SELECT id FROM favorite WHERE id = :id")
+    suspend fun getFavoriteById(id: Int): Int
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertFavorite(favorite: Favorite)
 

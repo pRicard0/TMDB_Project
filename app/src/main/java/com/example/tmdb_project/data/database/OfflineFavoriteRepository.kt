@@ -7,6 +7,8 @@ class OfflineFavoriteRepository(private val favoriteDao: FavoriteDao) : Favorite
 
     override suspend fun getFavoriteByPosterPath(poster: String): Favorite = favoriteDao.getFavoriteByPosterPath(poster)
 
+    override suspend fun getFavoriteById(id: Int): Int = favoriteDao.getFavoriteById(id)
+
     override suspend fun insertFavorite(favorite: Favorite) = favoriteDao.insertFavorite(favorite)
 
     override suspend fun deleteFavorite(favorite: Favorite) = favoriteDao.deleteFavorite(favorite)
